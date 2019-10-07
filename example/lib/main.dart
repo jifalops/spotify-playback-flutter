@@ -19,24 +19,19 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initConnector();
+    // initConnector();
   }
 
   /// Initialize the spotify playback sdk, by calling spotifyConnect
   Future<void> initConnector() async {
     try {
-      await SpotifyPlayback.spotifyConnect(
-              clientId: Credentials.clientId,
-              redirectUrl: Credentials.redirectUrl)
-          .then((connected) {
-        if (!mounted) return;
-        // If the method call is successful, update the state to reflect this change
-        setState(() {
-          _connectedToSpotify = connected;
-        });
-      }, onError: (error) {
-        // If the method call trows an error, print the error to see what went wrong
-        print(error);
+      final connected = await SpotifyPlayback.spotifyConnect(
+          clientId: Credentials.clientId, redirectUrl: Credentials.redirectUrl);
+
+      // if (!mounted) return;
+      // If the method call is successful, update the state to reflect this change
+      setState(() {
+        _connectedToSpotify = connected;
       });
     } on PlatformException {
       print('Failed to connect.');
@@ -218,8 +213,9 @@ class _MyAppState extends State<MyApp> {
   /// Get the image by provided uri
   Future<void> getImage(String uri) async {
     try {
-      await SpotifyPlayback.getImage(uri: uri, quality: 100, size: ImageDimension.LARGE).then(
-          (imageReceived) {
+      await SpotifyPlayback.getImage(
+              uri: uri, quality: 100, size: ImageDimension.LARGE)
+          .then((imageReceived) {
         setState(() {
           image = imageReceived;
         });
@@ -231,12 +227,14 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-    Future<void> getAuthToken() async {
+  Future<void> getAuthToken() async {
     try {
-      SpotifyPlayback.getAuthToken(clientId: Credentials.clientId,redirectUrl: Credentials.redirectUrl).then((authToken){
+      SpotifyPlayback.getAuthToken(
+              clientId: Credentials.clientId,
+              redirectUrl: Credentials.redirectUrl)
+          .then((authToken) {
         print(authToken);
       });
-
     } on PlatformException {
       print('Failed to play.');
     }
@@ -257,6 +255,10 @@ class _MyAppState extends State<MyApp> {
               ),
               Wrap(
                 children: <Widget>[
+                  RaisedButton(
+                    onPressed: initConnector,
+                    child: Text("Connect"),
+                  ),
                   RaisedButton(
                     onPressed: () =>
                         play("spotify:track:7zFXmv6vqI4qOt4yGf3jYZ"),
@@ -313,12 +315,10 @@ class _MyAppState extends State<MyApp> {
                                 "https://i.scdn.co/image/3269971d34d3f17f16efc2dfa95e302cc961a36c"),
                           ),
                       child: Text("Get image")),
-
                   RaisedButton(
                     onPressed: () => getAuthToken(),
                     child: Text("Auth token"),
                   ),
-
                   (image != null)
                       ? Image.memory(
                           image,
