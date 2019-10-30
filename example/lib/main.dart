@@ -14,25 +14,23 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _connectedToSpotify = false;
-  Uint8List image = null;
+  Uint8List image;
 
   @override
   void initState() {
     super.initState();
-    // initConnector();
+    initConnector();
   }
 
   /// Initialize the spotify playback sdk, by calling spotifyConnect
   Future<void> initConnector() async {
     try {
-      final connected = await SpotifyPlayback.spotifyConnect(
+      _connectedToSpotify = await SpotifyPlayback.spotifyConnect(
           clientId: Credentials.clientId, redirectUrl: Credentials.redirectUrl);
 
-      // if (!mounted) return;
+      if (!mounted) return;
       // If the method call is successful, update the state to reflect this change
-      setState(() {
-        _connectedToSpotify = connected;
-      });
+      setState(() {});
     } on PlatformException {
       print('Failed to connect.');
     }
